@@ -16,11 +16,19 @@ export default function App() {
   const [repositories, setRepositories] = useState([])
 
   useEffect(() => {
-    api.get('repositories').then(response => setRepositories(response.data))
-  }, [])
+    api.get('repositories').then(response => setRepositories(response.data));
+  }, []);
 
   async function handleLikeRepository(id) {
-    // Implement "Like Repository" functionality
+    const reponse = await api.post(`repositories/${id}/like`);
+
+    const newRepositoriesList = repositories.map(repository => {
+      if (repository.id === id) return reponse.data;
+
+      return repository;
+    });
+
+    setRepositories(newRepositoriesList);
   }
 
   return (
@@ -52,8 +60,7 @@ export default function App() {
   
               <TouchableOpacity
                 style={styles.button}
-                onPress={() => handleLikeRepository(1)}
-                // Remember to replace "1" below with repository ID: {`like-button-${repository.id}`}
+                onPress={() => handleLikeRepository(repository.id)}
                 testID={`like-button-${repository.id}`}
               >
                 <Text style={styles.buttonText}>Curtir</Text>
